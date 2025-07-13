@@ -60,10 +60,22 @@ chatButton.addEventListener('click', () => {
     if (message) {
         addMessage(message, false);
         chatInput.value = '';
-        // Simulate bot response (replace with actual API call)
-        setTimeout(() => {
-            addMessage('Thanks for your message! I\'m here to help you explore Singapore.', true);
-        }, 1000);
+        // Call chatbot API
+        fetch('https://lyyds-flowise.hf.space/api/v1/prediction/52150eb9-b86a-4977-9ab2-61c79902d6f1', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ input: message })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const botReply = data?.data || 'Sorry, I didn’t get that.';
+            addMessage(botReply, true);
+        })
+        .catch(error => {
+            console.error('Chatbot error:', error);
+            addMessage('Oops! Something went wrong connecting to the bot.', true);
+        });
+
     }
 });
 
